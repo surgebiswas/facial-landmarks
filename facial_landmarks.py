@@ -23,6 +23,7 @@ from image_utility import save_image, generate_random_color, draw_border
 from imutils import face_utils
 
 
+
 def hog_landmarks(image, gray):
     faces_hog = face_detector(gray, 1)
 
@@ -120,13 +121,13 @@ def face_detection(image):
     save_image(image)
 
     # Show the image
-    cv2.imshow("Facial Landmarks", image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.imshow("Facial Landmarks", image)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
 if __name__ == "__main__":
 
-    HOME = "/home/keyur-r/image_data"
+    HOME = os.path.dirname(os.path.abspath(__file__))
 
     # handle command line arguments
     ap = argparse.ArgumentParser()

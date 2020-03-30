@@ -4,8 +4,10 @@ import uuid
 from random import choice, sample
 
 
-def save_image(image):
-    file_name = str(uuid.uuid4()) + '.jpg'
+def save_image(image, file_name=None):
+    if file_name is None:
+        file_name = str(uuid.uuid4()) + '.jpg'
+    
     # Save the image
     cv2.imwrite(file_name, image)
 

@@ -3,3 +3,6 @@ imutils==0.4.6
 dlib==19.15.0
 opencv-python==3.4.2.17
 opencv-contrib-python==3.4.2.17
+jupyter==1.0.0
+ipython==7.9.0
+Flask==1.1.1
