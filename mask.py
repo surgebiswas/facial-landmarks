@@ -64,30 +64,30 @@ def build_mask(lm):
     left_temple = 0.5*lm[0] + 0.5*lm[17]
     right_temple = 0.5*lm[26] + 0.5*lm[16]
     
-    #left_jaw = lm[np.arange(0,8+1),:]
-    left_jaw = np.vstack([
-        lm[0],
-        0.8*lm[0] + 0.2*lm[1],
-        0.8*left_temple + 0.2*lm[4],
-        0.2*left_temple + 0.8*lm[4],
-        0.2*lm[2] + 0.8*lm[3],
-        lm[3],
-        0.2*left_temple + 0.8*lm[4],
-        lm[5:9,:]
-    ])
+    left_jaw = lm[np.arange(0,8+1),:]
+#     left_jaw = np.vstack([
+#         lm[0],
+#         0.8*lm[0] + 0.2*lm[1],
+#         0.8*left_temple + 0.2*lm[4],
+#         0.2*left_temple + 0.8*lm[4],
+#         0.2*lm[2] + 0.8*lm[3],
+#         lm[3],
+#         0.2*left_temple + 0.8*lm[4],
+#         lm[5:9,:]
+#     ])
     
     
-    #right_jaw = lm[np.arange(9,17), :]
-    right_jaw = np.flipud(np.vstack([
-        lm[16],
-        0.5*lm[16] + 0.5*lm[15],
-        0.7*right_temple + 0.3*lm[12],
-        0.3*right_temple + 0.7*lm[12],
-        0.5*lm[14] + 0.5*lm[13],
-        lm[13],
-        0.2*right_temple + 0.8*lm[12],
-        lm[[11,10, 9, 8],:]
-    ]))
+    right_jaw = lm[np.arange(9,17), :]
+#     right_jaw = np.flipud(np.vstack([
+#         lm[16],
+#         0.5*lm[16] + 0.5*lm[15],
+#         0.7*right_temple + 0.3*lm[12],
+#         0.3*right_temple + 0.7*lm[12],
+#         0.5*lm[14] + 0.5*lm[13],
+#         lm[13],
+#         0.2*right_temple + 0.8*lm[12],
+#         lm[[11,10, 9, 8],:]
+#     ]))
 
     right_cheekbone = [0.6*lm[25] + 0.4*lm[11],
                         0.4*lm[23] + 0.6*lm[53],
@@ -126,13 +126,15 @@ def impose_mask(imfile, output_file):
 
     landmarks = face_detection(image)
     masks = build_mask(landmarks[0])
+    #colors = [np.array([144, 202, 249])/255, np.array([144, 202, 249])/300]
+    colors = [np.array([255, 105, 180])/255, np.array([255, 105, 180])/300]
+    assert len(colors) == len(masks)
 
     fig = plt.figure(figsize=(10,10))
     plt.imshow(image[:, :, [2, 1, 0]]) # BGR
 
-    for mask in masks:
-        plt.fill(mask[:,0], mask[:,1], color=np.array([144, 202, 249])/255 )
-        plt.fill(mask[:,0], mask[:,1], color=np.array([144, 202, 249])/300 )
+    for i,mask in enumerate(masks):
+        plt.fill(mask[:,0], mask[:,1], color=colors[i])
 
     plt.axis('off')
     plt.savefig(output_file, fig=fig, format='jpeg')
