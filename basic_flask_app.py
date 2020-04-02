@@ -1,4 +1,6 @@
 import os
+import glob
+
 from flask import Flask, flash, request, redirect, url_for, send_file
 from werkzeug.utils import secure_filename
 
@@ -8,7 +10,7 @@ import mask
 
 
 
-UPLOAD_FOLDER = './'
+UPLOAD_FOLDER = './images/'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
@@ -32,25 +34,28 @@ def upload_file():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            input_file = file.filename
-            output_file = os.path.basename(secure_filename(input_file)) + '_mask.jpg'
-            #filename = 'uploaded_' + secure_filename(file.filename)
+            input_file = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            output_file = os.path.join(app.config['UPLOAD_FOLDER'], 
+                    secure_filename(input_file) + '_mask.jpg')
             
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], input_file))
+            # remove contents of UPLOAD_FOLDER, which will have previous data
+            ufiles = glob.glob(os.path.join(app.config['UPLOAD_FOLDER'], '*'))
+            for uf in ufiles:
+                os.remove(uf)
+
+            file.save(input_file)
             
             # DO IMAGE PROCESSING HERE
             mask.impose_mask(input_file, output_file)
             
-            #return send_file(processed_filename, mimetype='image/jpg')
-            #return redirect(url_for('uploaded_file',
-            #                        filename=processed_filename))
-            return send_from_directory(app.config['UPLOAD_FOLDER'], output_file, mimetype='image/jpg')
+            return send_from_directory(app.config['UPLOAD_FOLDER'], 
+                    os.path.basename(output_file), mimetype='image/jpg')
             
             
     return '''
     <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
+    <title>Maskify Me</title>
+    <h1>Upload a (profile) photo of yourself, and prepare to be maskified!</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
       <input type=submit value=Upload>
